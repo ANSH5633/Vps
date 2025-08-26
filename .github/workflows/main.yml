@@ -1,0 +1,32 @@
+name: VPS Manager
+
+on:
+  schedule:
+    - cron: "55 5 * * *"   # Runs every day at 5:55
+  workflow_dispatch:       # Allow manual trigger too
+
+jobs:
+  vps-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Restore Backup Data
+        uses: actions/download-artifact@v4
+        with:
+          name: vps-backup
+          path: ./vps-data
+
+      - name: Deploy to VPS
+        run: |
+          echo "Syncing data to VPS..."
+          # Example: upload data to VPS via SSH
+          # rsync -avz ./vps-data/ user@your-vps-ip:/home/user/data
+
+      - name: Restart VPS if needed
+        run: |
+          echo "Restarting VPS using provider API..."
+          # Example for Hetzner Cloud CLI:
+          # hcloud server reboot <server-id>
